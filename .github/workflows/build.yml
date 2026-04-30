@@ -1,1 +1,32 @@
+name: Build EXE
 
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller PySide6 send2trash
+
+    - name: Build EXE
+      run: |
+        pyinstaller --onefile --windowed --name DuplicateFinder --collect-all PySide6 duplicate_finder.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: DuplicateFinder
+        path: dist/DuplicateFinder.exe
